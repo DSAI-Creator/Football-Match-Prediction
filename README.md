@@ -27,7 +27,7 @@ git checkout features/<your_name>
 ```command
 git add .
 ```
-ljk
+
 - Commit:
 (**Note**: The <message> is recommended to be in the syntax "<Action> <Object>", eg. "Create dataset folder", "Hotfix <function> in data_processing.py")
 ```command
