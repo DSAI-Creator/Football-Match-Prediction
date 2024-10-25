@@ -1,16 +1,16 @@
 # Football-Match-Prediction
 ## Github Commit Flow:
-1, Clone Repo:
+#### 1, Clone Repo:
 ```command
 git clone https://github.com/DSAI-Creator/Football-Match-Prediction.git
 ```
 
-2, (Local) Pull **Main Branch** to your **Local Main Branch** before do anything!:
+#### 2, (Local) Pull **Main Branch** to your **Local Main Branch** before do anything!:
 ```command
 git pull origin main
 ```
 
-3, (Local) Create/Switch to your **Local** branch named **features/<your_name>**:
+#### 3, (Local) Create/Switch to your **Local** branch named **features/<your_name>**:
 - Create (Skip this if you have this branch):
 ```command
 git checkout -b features/<your_name>
@@ -21,7 +21,7 @@ git checkout -b features/<your_name>
 git checkout features/<your_name>
 ```
 
-4, (Local) Add, Commit & Push your changes:
+#### 4, (Local) Add, Commit & Push your changes:
 - Add:
 (**Note**: '.' represent all files)
 ```command
@@ -45,6 +45,6 @@ git push origin --set-upstream features/<your_name>
 git push origin features/<your_name>
 ```
 
-5, (Remote) Check the Pull Request and Fix the errors (if exists)
+#### 5, (Remote) Check the Pull Request and Fix the errors (if exists)
 
 ## Folder Structure:
