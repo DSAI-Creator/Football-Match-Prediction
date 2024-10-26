@@ -47,5 +47,5 @@ git push origin features/{your_name}
 ```
 
 #### 6, (Remote) Check the Pull Request and Fix the errors (if exists)
-
+---
 ## Folder Structure:
