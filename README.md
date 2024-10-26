@@ -50,3 +50,37 @@ git push origin features/{your_name}
 #### 6, (Remote) Check the Pull Request and Fix the errors (if exists)
 ---
 ## Folder Structure:
+#### 1, Base Structure:
+Football-Match-Prediction/
+├── .idea/
+├── .venv/
+├── data/
+│   ├── processed/
+│   ├── raw/
+│       └── scraping/
+├── src/
+│   ├── eda/
+│   │   └── __init__.py
+│   ├── evaluation/
+│   │   └── __init__.py
+│   ├── models/
+│   │   └── __init__.py
+│   ├── preprocessing/
+│   │   └── __init__.py
+│   └── scraping/
+├── tests/
+└── README.md
+
+#### 2, Details:
+- 'data' Folder (.csv files):
+  + 'data/raw': contains 'all_teams_data.csv' (final scraping version), and scraping csv files in './scraping' folder.
+  + 'data/processed': contains outputs of 'src/preprocessing/..' files.
+
+- 'src' Folder (.py or .ipynb files):
+  + 'src/eda': contains all eda files
+  + 'src/evaluation': contains all custom evaluation metric files
+  + 'src/models': contains all AI models
+  + 'src/preprocessing': contains all preprocessing files (Output dir: 'data/processed')
+  + 'src/scraping': contains all scraping files (Output dir: 'data/raw/scraping')
+
+- 'tests/' Folder (.py or .ipynb files): contains all test files for each function/file in 'src/..', eg. 'tests/test_evaluation_fbmetric' or 'tests/test_ensemble_learning'
