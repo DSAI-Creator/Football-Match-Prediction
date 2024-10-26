@@ -11,3 +11,7 @@ M
 src/preprocessing/__init__.py,f\6\f6f01343fa7babf6c8a5f26da5e3e9c6d0bd77ae
 p
 @src/scraping/Submitted Version/lightweight-laliga-scraping.ipynb,e\1\e17b2e11bee18d881bcc0c914e034c02f5f772db
+Y
+)data/processed/RemoveMeWhenFolderNotEmpty,4\f\4f77f556dbffc9088d780d9764d4ac7dd37f8dc7
+P
+ tests/RemoveMeWhenFolderNotEmpty,0\5\057ab3fec4456f40935c623b050579d385461200
