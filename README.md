@@ -10,7 +10,7 @@ git clone https://github.com/DSAI-Creator/Football-Match-Prediction.git
 git pull origin main
 ```
 
-#### 3, (Local) Create/Switch to your **Local** branch named **features/{your_name}**:
+#### 3, (Local) Create/Switch to your <span style="color: blue; font-weight: bold;">Local</span> branch named **features/{your_name}**:
 - Create (Skip this if you have this branch):
 ```bash
 git checkout -b features/{your_name}
