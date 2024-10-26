@@ -6,13 +6,13 @@
 git clone https://github.com/DSAI-Creator/Football-Match-Prediction.git
 ```
 
-#### 2, (Local) Pull **Main Branch** to your **Local Main Branch** before do anything!:
+#### 2, (Local) Pull $${\color{lightblue}Main \space Branch}$$ to your $${\color{lightblue}Local \space Main \space Branch}$$ before do anything!:
 ```bash
 git checkout main
 git pull origin main
 ```
 
-#### 3, (Local) Create/Switch to your <span style="color: blue; font-weight: bold;">Local</span> branch named **features/{your_name}**:
+#### 3, (Local) Create/Switch to your $${\color{lightblue}Local}$$ branch named ***features/{your_name}***:
 - Create (Skip this if you have this branch):
 ```bash
 git checkout -b features/{your_name}
@@ -25,20 +25,20 @@ git checkout features/{your_name}
 
 #### 4, (Local) Add, Commit your changes:
 - Add:
-(**Note**: '.' represent all files)
+($${\color{lightblue}Note}$$: '.' represent all files)
 ```bash
 git add .
 ```
 
 - Commit:
-(**Note**: The {message} is recommended to be in the syntax "{Action} {Object}", eg. "Create dataset folder", "Hotfix {function} in data_processing.py")
+($${\color{lightblue}Note}$$: The ***{message}*** is recommended to be in the syntax "{Action} {Object}", eg. "Create dataset folder", "Hotfix {function} in data_processing.py")
 ```bash
 git commit -m {message}
 ```
 
 #### 5, (Local) Push your changes:
 - Create Remote Branch:
-(**Note**: Skip this if this REPOSITORY have your **features/{your_name}** branch)
+($${\color{lightblue}Note}$$: Skip this if this REPOSITORY have your ***features/{your_name}*** branch)
 ```bash
 git push origin --set-upstream features/{your_name}
 ```
