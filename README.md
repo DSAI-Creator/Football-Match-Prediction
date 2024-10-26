@@ -52,6 +52,7 @@ git push origin features/{your_name}
 ## Folder Structure:
 #### 1, Base Structure:
 Football-Match-Prediction/
+```bash
 ├── .idea/
 ├── .venv/
 ├── data/
@@ -70,6 +71,7 @@ Football-Match-Prediction/
 │   └── scraping/
 ├── tests/
 └── README.md
+```
 
 #### 2, Details:
 - 'data' Folder (.csv files):
@@ -83,4 +85,5 @@ Football-Match-Prediction/
   + 'src/preprocessing': contains all preprocessing files (Output dir: 'data/processed')
   + 'src/scraping': contains all scraping files (Output dir: 'data/raw/scraping')
 
-- 'tests/' Folder (.py or .ipynb files): contains all test files for each function/file in 'src/..', eg. 'tests/test_evaluation_fbmetric' or 'tests/test_ensemble_learning'
+- 'tests/' Folder (.py or .ipynb files):
+  + Contains all test files for each function/file in 'src/..', eg. 'tests/test_evaluation_fbmetric' or 'tests/test_ensemble_learning'
