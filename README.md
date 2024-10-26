@@ -7,6 +7,7 @@ git clone https://github.com/DSAI-Creator/Football-Match-Prediction.git
 
 #### 2, (Local) Pull **Main Branch** to your **Local Main Branch** before do anything!:
 ```bash
+git checkout main
 git pull origin main
 ```
 
