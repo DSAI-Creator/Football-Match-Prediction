@@ -83,6 +83,14 @@ class HandleMissingValues:
         return df
 
     def fill_na(self, col_names: list = None, technique: str = 'mean', inplace: bool = False, **kwargs) -> pd.DataFrame:
+        """
+        Function for Filling NaN values of given columns with different techniques
+        :param col_names: List of columns
+        :param technique: Str of way to fill NaN values
+        :param inplace: Bool for whether to Modify the DataFrame or not
+        :param kwargs: Args for different imputer
+        :return: None (inplace=True), DataFrame (inplace=False)
+        """
         if technique not in ['mean', 'median', 'mode', 'interpolation', 'knn', 'mice']:
             raise ValueError('fill_na(): "method" must be in '
                              '["mean", "median", "mode", "interpolation", "knn", "mice"]')
