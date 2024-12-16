@@ -12,12 +12,12 @@ def preprocess_categorical_data(df):
     df['Points'] = df['Result'].map({'L': 0, 'W': 3, 'D': 1})
     df['GF'] = df['GF'].astype(float)
     df['GA'] = df['GA'].astype(float)
-    df.drop(columns=['Notes', 'Date'], inplace=True)
+    df['Poss'] = df['Poss_x']
     return df
 
 def drop_columns(df):
     df = df.copy()
-    df.drop(columns=['Attendance', 'Sweeper__AvgDist', 'Poss_y'], inplace=True)
+    df.drop(columns=['Attendance', 'Sweeper__AvgDist', 'Poss_y', 'Notes', 'Date', 'Poss_x'], inplace=True)
     return df
 
 def preprocess_data(df):
