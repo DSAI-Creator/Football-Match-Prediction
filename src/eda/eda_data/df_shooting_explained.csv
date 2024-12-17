@@ -1,0 +1,11 @@
+,Column,Explanation
+0,Standard__Gls,Number of goals scored (Goals Scored)
+1,Standard__Sh,Number of shots taken (Shots)
+2,Standard__SoT,Number of shots on target (Shots on Target)
+3,Standard__SoT%,Percentage of shots on target (Shots on Target Percentage)
+4,Standard__G/Sh,Goals per shot (Goals per Shot)
+5,Standard__G/SoT,Goals per shot on target (Goals per Shot on Target)
+6,Standard__Dist,Average shot distance (Shot Distance)
+7,Standard__FK,Number of free kicks (Free Kicks)
+8,Standard__PK,Number of penalty kicks (Penalty Kicks)
+9,Standard__PKatt,Number of penalty kick attempts (Penalty Kicks Attempted)
