@@ -1,75 +1,78 @@
-import tkinter as tk
-from tkinter import ttk
-from datetime import datetime
+import streamlit as st
+import pandas as pd
+import random
+import os
 
-# Hàm dự đoán kết quả (Giả lập cho 5 mô hình)
-def predict_result():
-    home_team = home_team_entry.get()
-    away_team = away_team_entry.get()
-    match_time = match_time_entry.get()
+# Placeholder: Hàm dự đoán từ các mô hình (thay thế bằng mô hình thực của bạn)
+def model_1_predict(home_team, away_team, match_date):
+    return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 
-    if not home_team or not away_team or not match_time:
-        result_label.config(text="Vui lòng nhập đầy đủ thông tin.")
-        return
+def model_2_predict(home_team, away_team, match_date):
+    return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 
-    # Cập nhật thông báo "Đang xử lý..."
-    result_label.config(text="Đang dự đoán kết quả...")
+def model_3_predict(home_team, away_team, match_date):
+    return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 
-    # Giả lập kết quả từ 5 mô hình khác nhau
-    model_1_result = f"{home_team} 2 - 1 {away_team}"
-    model_2_result = f"{home_team} 1 - 1 {away_team}"
-    model_3_result = f"{home_team} 3 - 0 {away_team}"
-    model_4_result = f"{home_team} 2 - 2 {away_team}"
-    model_5_result = f"{home_team} 0 - 1 {away_team}"
+def model_4_predict(home_team, away_team, match_date):
+    return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 
-    # Hiển thị kết quả dự đoán từ các mô hình
-    model_1_label.config(text=f"Model 1: {model_1_result}")
-    model_2_label.config(text=f"Model 2: {model_2_result}")
-    model_3_label.config(text=f"Model 3: {model_3_result}")
-    model_4_label.config(text=f"Model 4: {model_4_result}")
-    model_5_label.config(text=f"Model 5: {model_5_result}")
+def model_5_predict(home_team, away_team, match_date):
+    return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 
-# Tạo cửa sổ chính
-root = tk.Tk()
-root.title("Football Match Predictor")
-root.geometry("600x600")
+# Tạo giao diện Streamlit
+st.title("Football Match Outcome Predictor ⚽⚽⚽⚽⚽⚽⚽⚽⚽⚽⚽")
 
-# Tạo các label và entry widgets cho input
-match_time_label = tk.Label(root, text="Thời gian trận đấu:")
-match_time_label.pack(pady=5)
-match_time_entry = ttk.Entry(root)
-match_time_entry.pack(pady=5)
-match_time_entry.insert(0, datetime.now().strftime("%Y-%m-%d %H:%M:%S"))  # Hiển thị thời gian hiện tại
+# Nhập thông tin trận đấu
+st.sidebar.header("Input Match Details")
+home_team = st.sidebar.text_input("Home Team", "Team A")
+away_team = st.sidebar.text_input("Away Team", "Team B")
+match_date = st.sidebar.date_input("Match Date")
 
-home_team_label = tk.Label(root, text="Tên đội nhà:")
-home_team_label.pack(pady=5)
-home_team_entry = ttk.Entry(root)
-home_team_entry.pack(pady=5)
+# Nút thực hiện dự đoán
+if st.sidebar.button("Predict"):
+    # Gọi các mô hình dự đoán
+    result_1, margin_1 = model_1_predict(home_team, away_team, match_date)
+    result_2, margin_2 = model_2_predict(home_team, away_team, match_date)
+    result_3, margin_3 = model_3_predict(home_team, away_team, match_date)
+    result_4, margin_4 = model_4_predict(home_team, away_team, match_date)
+    result_5, margin_5 = model_5_predict(home_team, away_team, match_date)
 
-away_team_label = tk.Label(root, text="Tên đội khách:")
-away_team_label.pack(pady=5)
-away_team_entry = ttk.Entry(root)
-away_team_entry.pack(pady=5)
+    # Hiển thị kết quả
+    st.markdown("<h2 style='text-align: center;'>Prediction Results</h2>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([2, 6, 2])
 
-# Nút dự đoán
-predict_button = ttk.Button(root, text="Dự đoán kết quả", command=predict_result)
-predict_button.pack(pady=20)
+    # Hiển thị logo đội nhà
+    with col1:
+        home_logo_path = f"logo/{home_team}.png"
+        if os.path.exists(home_logo_path):
+            st.image(home_logo_path, use_container_width=False, width=150)
+        else:
+            st.write("No logo available")
 
-# Label để hiển thị kết quả
-result_label = tk.Label(root, text="", font=("Arial", 12))
-result_label.pack(pady=10)
+    # Hiển thị bảng kết quả
+    with col2:
+        results_df = pd.DataFrame({
+            "Model": ["Model 1", "Model 2", "Model 3", "Model 4", "Model 5"],
+            "Prediction": [result_1, result_2, result_3, result_4, result_5],
+            "Goal Difference (Home - Away)": [margin_1, margin_2, margin_3, margin_4, margin_5]
+        })
+        st.table(results_df)
 
-# Label cho kết quả từ 5 mô hình
-model_1_label = tk.Label(root, text="Model 1:", font=("Arial", 10))
-model_1_label.pack(pady=5)
-model_2_label = tk.Label(root, text="Model 2:", font=("Arial", 10))
-model_2_label.pack(pady=5)
-model_3_label = tk.Label(root, text="Model 3:", font=("Arial", 10))
-model_3_label.pack(pady=5)
-model_4_label = tk.Label(root, text="Model 4:", font=("Arial", 10))
-model_4_label.pack(pady=5)
-model_5_label = tk.Label(root, text="Model 5:", font=("Arial", 10))
-model_5_label.pack(pady=5)
+    # Hiển thị logo đội khách
+    with col3:
+        away_logo_path = f"logo/{away_team}.png"
+        if os.path.exists(away_logo_path):
+            st.image(away_logo_path, use_container_width=False, width=150)
+        else:
+            st.write("No logo available")
 
-# Chạy giao diện Tkinter
-root.mainloop()
+    # Điều chỉnh khoảng cách logo và bảng kết quả
+    st.markdown("<style>.css-1lcbmhc {margin-top: 500px !important;}</style>", unsafe_allow_html=True)
+
+else:
+    st.info("Please enter match details and click 'Predict' to get the results.")
+
+# Phần hiển thị bổ sung
+st.sidebar.markdown("---")
+st.sidebar.header("About")
+st.sidebar.info("This app uses 5 different models to predict the outcome of a football match, including the goal difference (Home - Away). Replace the placeholder prediction functions with your trained models.")
