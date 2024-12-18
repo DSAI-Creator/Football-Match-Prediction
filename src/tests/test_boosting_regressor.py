@@ -1,3 +1,6 @@
+import sys
+sys.path.append("D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction")  # Thêm thư mục cha (src) vào PYTHONPATH
+
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler

@@ -332,7 +332,7 @@ class BoostingClassificationOptimize:
             ab = AdaBoostClassifier(
                 n_estimators=trial.suggest_int('n_estimators', 50, 500),
                 learning_rate=trial.suggest_float('learning_rate', 0.01, 1.0, log=True),
-                algorithm=trial.suggest_categorical('algorithm', ['SAMME', 'SAMME.R']),
+                algorithm='SAMME',
                 estimator=DecisionTreeClassifier(
                     max_depth=trial.suggest_int('base_estimator_max_depth', 1, 20)
                 ),

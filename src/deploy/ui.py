@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import random
 import os
+from teamname import get_team_names
 
 # Placeholder: Hàm dự đoán từ các mô hình (thay thế bằng mô hình thực của bạn)
 def model_1_predict(home_team, away_team, match_date):
@@ -20,12 +21,19 @@ def model_5_predict(home_team, away_team, match_date):
     return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 
 # Tạo giao diện Streamlit
-st.title("Football Match Outcome Predictor ⚽⚽⚽⚽⚽⚽⚽⚽⚽⚽⚽")
+st.title("Football Match Outcome Predictor ⚽⚽⚽")
+
+# Lấy danh sách đội từ teamname.py
+try:
+    team_names = get_team_names()
+except FileNotFoundError as e:
+    st.error(f"Error: {e}")
+    st.stop()
 
 # Nhập thông tin trận đấu
 st.sidebar.header("Input Match Details")
-home_team = st.sidebar.text_input("Home Team", "Team A")
-away_team = st.sidebar.text_input("Away Team", "Team B")
+home_team = st.sidebar.selectbox("Select Home Team", team_names, index=0)
+away_team = st.sidebar.selectbox("Select Away Team", team_names, index=1)
 match_date = st.sidebar.date_input("Match Date")
 
 # Nút thực hiện dự đoán
@@ -65,12 +73,8 @@ if st.sidebar.button("Predict"):
             st.image(away_logo_path, use_container_width=False, width=150)
         else:
             st.write("No logo available")
-
-    # Điều chỉnh khoảng cách logo và bảng kết quả
-    st.markdown("<style>.css-1lcbmhc {margin-top: 500px !important;}</style>", unsafe_allow_html=True)
-
 else:
-    st.info("Please enter match details and click 'Predict' to get the results.")
+    st.info("Please select match details and click 'Predict' to get the results.")
 
 # Phần hiển thị bổ sung
 st.sidebar.markdown("---")
