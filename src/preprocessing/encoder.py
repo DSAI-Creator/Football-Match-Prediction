@@ -1,144 +1,130 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, OrdinalEncoder, TargetEncoder
+from category_encoders import BinaryEncoder, CountEncoder
 
-class DataEncoding(BaseEstimator, TransformerMixin):
-    def __init__(self):
-        self.label_encoders = {}
-        self.one_hot_encoder = None
-        self.target_mean_map = {}
-        self.ordinal_maps = {}
-        self.binary_encoders = {}
 
-    def label_encode(self, df, columns):
+class Encoders:
+    def __init__(self, df, encoder_columns_dict):
         """
-        Apply label encoding to specified columns.
-        :param df: Input DataFrame
-        :param columns: List of column names to label encode
-        :return: DataFrame with label-encoded columns
+        Initialize the encoder with a dataframe and encoding specifications
+        encoder_columns_dict format: {
+            'label': ['col1', 'col2'],
+            'one_hot': ['col3'],
+            'target': ['col4'],
+            etc.
+        }
         """
-        for col in columns:
-            if col not in self.label_encoders:
-                self.label_encoders[col] = LabelEncoder()
-            df[col] = self.label_encoders[col].fit_transform(df[col])
-        return df
+        self.df = df
+        self.encoder_list = ['label', 'one_hot', 'target', 'ordinal', 'binary', 'frequency']
+        self.encoder_columns_dict = encoder_columns_dict
+        
+        # Store encoders separately for each column
+        self.label_encoders = {col: LabelEncoder() for col in encoder_columns_dict.get('label', [])}
+        self.one_hot_encoder = OneHotEncoder(sparse_output=False)
+        self.ordinal_encoder = OrdinalEncoder()
+        self.target_encoder = TargetEncoder()
+        self.binary_encoder = BinaryEncoder()
+        self.count_encoder = CountEncoder(normalize=True)
 
-    def one_hot_encode(self, df, columns):
+    def fit(self, target_column=None):
         """
-        Apply one-hot encoding to specified columns.
-        :param df: Input DataFrame
-        :param columns: List of column names to one-hot encode
-        :return: DataFrame with one-hot encoded columns
+        Fit encoders to the data according to encoder_columns_dict
         """
-        return pd.get_dummies(df, columns=columns)
-
-    def target_encode(self, df, columns, target_column):
-        """
-        Apply target encoding to specified columns based on a target column.
-        :param df: Input DataFrame
-        :param columns: List of column names to target encode
-        :param target_column: Target column for calculating mean encoding
-        :return: DataFrame with target-encoded columns
-        """
-        for col in columns:
-            if col not in self.target_mean_map:
-                self.target_mean_map[col] = df.groupby(col)[target_column].mean()
-            df[col] = df[col].map(self.target_mean_map[col])
-        return df
-
-    def ordinal_encode(self, df, columns, order_dict):
-        """
-        Apply ordinal encoding to specified columns based on a provided order.
-        :param df: Input DataFrame
-        :param columns: List of column names to ordinal encode
-        :param order_dict: Dictionary mapping column names to ordered categories
-        :return: DataFrame with ordinal-encoded columns
-        """
-        for col in columns:
-            if col not in self.ordinal_maps:
-                self.ordinal_maps[col] = {k: i for i, k in enumerate(order_dict[col])}
-            df[col] = df[col].map(self.ordinal_maps[col])
-        return df
-
-    def binary_encode(self, df, columns):
-        """
-        Apply binary encoding to specified columns.
-        :param df: Input DataFrame
-        :param columns: List of column names to binary encode
-        :return: DataFrame with binary-encoded columns
-        """
-        for col in columns:
-            if col not in self.binary_encoders:
-                unique_vals = sorted(df[col].unique())
-                self.binary_encoders[col] = {val: format(i, f'0{len(bin(len(unique_vals) - 1)[2:])}b') for i, val in enumerate(unique_vals)}
-            binary_cols = df[col].map(self.binary_encoders[col]).apply(lambda x: list(map(int, x))).tolist()
-            binary_df = pd.DataFrame(binary_cols, columns=[f"{col}_bin_{i}" for i in range(len(binary_cols[0]))], index=df.index)
-            df = pd.concat([df.drop(columns=[col]), binary_df], axis=1)
-        return df
-
-    def frequency_encode(self, df, columns):
-        """
-        Apply frequency encoding to specified columns.
-        :param df: Input DataFrame
-        :param columns: List of column names to frequency encode
-        :return: DataFrame with frequency-encoded columns
-        """
-        for col in columns:
-            freq_map = df[col].value_counts(normalize=True)
-            df[col] = df[col].map(freq_map)
-        return df
-
-    def fit(self, X, y=None):
-        """
-        Placeholder for scikit-learn compatibility.
-        :param X: Input features (DataFrame)
-        :param y: Target column (optional)
-        :return: self
-        """
+        for encoder_type, columns in self.encoder_columns_dict.items():
+            if encoder_type == 'label':
+                # Fit each column separately with its own LabelEncoder
+                for col in columns:
+                    self.label_encoders[col].fit(self.df[col])
+            elif encoder_type == 'one_hot':
+                self.one_hot_encoder.fit(self.df[columns])
+            elif encoder_type == 'target':
+                if target_column is None:
+                    raise ValueError("target_column must be specified for target encoding")
+                self.target_encoder.fit(self.df[columns], self.df[target_column])
+            elif encoder_type == 'ordinal':
+                self.ordinal_encoder.fit(self.df[columns])
+            elif encoder_type == 'binary':
+                self.binary_encoder.fit(self.df[columns])
+            elif encoder_type == 'frequency':
+                self.count_encoder.fit(self.df[columns])
+            else:
+                raise ValueError(f"Unknown encoder type: {encoder_type}")
         return self
 
-    def transform(self, X):
+    def transform(self, df):
         """
-        Placeholder for scikit-learn compatibility. Returns the DataFrame unchanged.
-        :param X: Input features (DataFrame)
-        :return: Transformed DataFrame
+        Transform the data using fitted encoders
         """
-        return X
+        df = df.copy()  # Create a copy to avoid modifying the original dataframe
+        
+        for encoder_type, columns in self.encoder_columns_dict.items():
+            if encoder_type == 'label':
+                # Transform each column separately
+                for col in columns:
+                    df[col] = self.label_encoders[col].transform(df[col])
+            
+            elif encoder_type == 'one_hot':
+                # Handle one-hot encoding with proper column names
+                encoded_array = self.one_hot_encoder.transform(df[columns])
+                feature_names = self.one_hot_encoder.get_feature_names_out(columns)
+                encoded_df = pd.DataFrame(encoded_array, columns=feature_names, index=df.index)
+                
+                # Replace original columns with encoded ones
+                df = df.drop(columns=columns)
+                df = pd.concat([df, encoded_df], axis=1)
+            
+            elif encoder_type == 'target':
+                df[columns] = self.target_encoder.transform(df[columns])
+            elif encoder_type == 'ordinal':
+                df[columns] = self.ordinal_encoder.transform(df[columns])
+            elif encoder_type == 'binary':
+                encoded_df = self.binary_encoder.transform(df[columns])
+                df = df.drop(columns=columns)
+                df = pd.concat([df, encoded_df], axis=1)
+            elif encoder_type == 'frequency':
+                df[columns] = self.count_encoder.transform(df[columns])
 
-# Example usage:
-if __name__ == "__main__":
-    data = {
-        'Category': ['A', 'B', 'A', 'C', 'B'],
-        'City': ['Hanoi', 'Saigon', 'Hanoi', 'Danang', 'Saigon'],
-        'Target': [1, 0, 1, 0, 1]
-    }
-    df = pd.DataFrame(data)
+        return df
 
-    encoder = DataEncoding()
+    def fit_transform(self, target_column=None):
+        """
+        Fit and transform the data in one step using the encoders' native fit_transform methods
+        """
+        df = self.df.copy()  # Create a copy to avoid modifying the original dataframe
+        
+        for encoder_type, columns in self.encoder_columns_dict.items():
+            if encoder_type == 'label':
+                # Fit_transform each column separately
+                for col in columns:
+                    df[col] = self.label_encoders[col].fit_transform(df[col])
+            
+            elif encoder_type == 'one_hot':
+                # Handle one-hot encoding with proper column names
+                encoded_array = self.one_hot_encoder.fit_transform(df[columns])
+                feature_names = self.one_hot_encoder.get_feature_names_out(columns)
+                encoded_df = pd.DataFrame(encoded_array, columns=feature_names, index=df.index)
+                
+                # Replace original columns with encoded ones
+                df = df.drop(columns=columns)
+                df = pd.concat([df, encoded_df], axis=1)
+            
+            elif encoder_type == 'target':
+                if target_column is None:
+                    raise ValueError("target_column must be specified for target encoding")
+                df[columns] = self.target_encoder.fit_transform(df[columns], df[target_column])
+            
+            elif encoder_type == 'ordinal':
+                df[columns] = self.ordinal_encoder.fit_transform(df[columns])
+            
+            elif encoder_type == 'binary':
+                encoded_df = self.binary_encoder.fit_transform(df[columns])
+                df = df.drop(columns=columns)
+                df = pd.concat([df, encoded_df], axis=1)
+            
+            elif encoder_type == 'frequency':
+                df[columns] = self.count_encoder.fit_transform(df[columns])
+            
+            else:
+                raise ValueError(f"Unknown encoder type: {encoder_type}")
 
-    # Label Encoding
-    df = encoder.label_encode(df, columns=['Category'])
-    print("Label Encoded DataFrame:\n", df)
-
-    # One-Hot Encoding
-    df = encoder.one_hot_encode(df, columns=['City'])
-    print("One-Hot Encoded DataFrame:\n", df)
-
-    # Target Encoding
-    df = encoder.target_encode(df, columns=['Category'], target_column='Target')
-    print("Target Encoded DataFrame:\n", df)
-
-    # Ordinal Encoding
-    ordinal_order = {'Category': ['A', 'B', 'C']}
-    df = encoder.ordinal_encode(df, columns=['Category'], order_dict=ordinal_order)
-    print("Ordinal Encoded DataFrame:\n", df)
-
-    # Binary Encoding
-    df['BinaryCategory'] = ['A', 'B', 'A', 'C', 'B']
-    df = encoder.binary_encode(df, columns=['BinaryCategory'])
-    print("Binary Encoded DataFrame:\n", df)
-
-    # Frequency Encoding
-    df['FrequencyCategory'] = ['A', 'B', 'A', 'C', 'B']
-    df = encoder.frequency_encode(df, columns=['FrequencyCategory'])
-    print("Frequency Encoded DataFrame:\n", df)
+        return df
