@@ -11,8 +11,6 @@ M
 src/preprocessing/__init__.py,f\6\f6f01343fa7babf6c8a5f26da5e3e9c6d0bd77ae
 p
 @src/scraping/Submitted Version/lightweight-laliga-scraping.ipynb,e\1\e17b2e11bee18d881bcc0c914e034c02f5f772db
-P
- tests/RemoveMeWhenFolderNotEmpty,0\5\057ab3fec4456f40935c623b050579d385461200
 C
 src/eda/__init__.py,1\c\1ceb100762c491c1fdb87cf71ad065d1294479f5
 A
@@ -41,5 +39,19 @@ J
 src/__init__.py,b\1\b141e8a708cfc0de96ab25c59ca83087cbddf7fa
 R
 "src/preprocessing/create_config.py,a\c\ac55fec7eacab758d7d99d0ad1287a38d9692d6a
-=
-tests/main.py,0\1\01f8376d5663f34ab63ba313f4c1816c37d3b3a7
+L
+src/preprocessing/encoder.py,d\7\d74801a034b771541f57b154040e92f16f218885
+A
+tests/__init__.py,8\e\8e911f6351f3fa0cd30fc10a701473fbb56707e6
+E
+tests/test_encoder.py,a\4\a4bf10deb7407714e74d52d14ae572bf3f8e3ffb
+P
+ tests/test_boosting_regressor.py,d\4\d42c86cc2a900274bd2244887d7a2610e493d529
+Q
+!tests/test_boosting_classifier.py,2\0\20ef60ed22e801e3c569f128c6eeee4645757cfd
+T
+$src/tests/test_boosting_regressor.py,f\d\fd8d6d43d509195a0e8d8544cf5df5463bf0e669
+U
+%src/tests/test_boosting_classifier.py,3\3\33ab5b3689ddc3d7592d810649496211b7fd77ac
+I
+src/tests/test_encoder.py,9\e\9e96352d2f6306469f26226a14e23e8b63fc9a53

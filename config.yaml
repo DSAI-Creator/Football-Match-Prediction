@@ -3,7 +3,15 @@ TEST SETTINGS:
   HOME_TEAM: Barcelona
 TRAIN SETTINGS:
   DATE_COL: Time
-  PLOT_FEATURES_IMPORTANCE: false
-  TARGET_COL: GD_Home2Away
-  TRAIN_DATE: 2023-08
-  TRAIN_PATH: E:\Workspaces\My Projects\Football-Match-Prediction\data\processed\df_GD_as_target.csv
+  USE_PCA: True
+  PLOT_MODEL_SELECTION: False
+  PLOT_PCA_THRESHOLD: False
+  PLOT_FEATURES_IMPORTANCE: False
+  TRAIN_DATE: 2024-04 # 2023-08
+  N_TRIALS: 100
+  DATASET_PATH: E:\Workspaces\My Projects\Football-Match-Prediction\data\processed\df_GD_as_target.csv
+  # Regressor: ['DecisionTreeRegressor', 'RandomForestRegressor', 'AdaBoostRegressor', 'GradientBoostingRegressor', 'XGBRegressor']
+  # Classifier: ['DecisionTreeClassifier', 'RandomForestClassifier', 'AdaBoostClassifier', 'GradientBoostingClassifier', 'XGBClassifier']
+  MODEL: XGBClassifier
+  # Regressor: GD_Home2Away | Classifier: HomeTeam_Result
+  TARGET_COL: HomeTeam_Result
