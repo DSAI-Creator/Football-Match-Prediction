@@ -6,6 +6,7 @@ import optuna
 from sklearn.model_selection import cross_val_score
 import numpy as np
 import matplotlib.pyplot as plt
+import yaml
 
 
 class BoostingRegressionOptimize:
@@ -178,6 +179,65 @@ class BoostingRegressionOptimize:
         )
         return xgb
 
+    def get_pretrained(self, model):
+        with open('../../pretrained_models.yaml', 'r') as file:
+            config = yaml.safe_load(file)
+        if model not in self.models_list:
+            raise ValueError(f'Model must be in {self.models_list}')
+        elif model == 'DecisionTreeRegressor':
+            self.model = DecisionTreeRegressor(
+                max_depth=config['REGRESSION']['MAX_DEPTH'],
+                min_samples_leaf=config['REGRESSION']['MIN_SAMPLES_LEAF'],
+                ccp_alpha=config['REGRESSION']['CCP_ALPHA'],
+                random_state=42
+            )
+            self.model_name = 'DecisionTreeRegressor'
+        elif model == 'RandomForestRegressor':
+            self.model = RandomForestRegressor(
+                n_estimators=config['REGRESSION']['N_ESTIMATORS'],
+                max_depth=config['REGRESSION']['MAX_DEPTH'],
+                min_samples_leaf=config['REGRESSION']['MIN_SAMPLES_LEAF'],
+                max_features=config['REGRESSION']['MAX_FEATURES'],
+                max_samples=config['REGRESSION']['MAX_SAMPLES'],
+                bootstrap=True,
+                oob_score=True,
+                random_state=42
+            )
+            self.model_name = 'RandomForestRegressor'
+        elif model == 'AdaBoostRegressor':
+            self.model = AdaBoostRegressor(
+                n_estimators=config['REGRESSION']['N_ESTIMATORS'],
+                learning_rate=config['REGRESSION']['LEARNING_RATE'],
+                loss=config['REGRESSION']['LOSS'],
+                estimator=DecisionTreeRegressor(
+                    max_depth=config['REGRESSION']['BASE_ESTIMATOR_MAX_DEPTH']
+                ),
+                random_state=42
+            )
+            self.model_name = 'AdaBoostRegressor'
+        elif model == 'GradientBoostingRegressor':
+            self.model = GradientBoostingRegressor(
+                n_estimators=config['REGRESSION']['N_ESTIMATORS'],
+                max_depth=config['REGRESSION']['MAX_DEPTH'],
+                min_samples_split=config['REGRESSION']['MIN_SAMPLES_SPLIT'],
+                learning_rate=config['REGRESSION']['LEARNING_RATE'],
+                random_state=42
+            )
+            self.model_name = 'GradientBoostingRegressor'
+        elif model == 'XGBRegressor':
+            self.model = XGBRegressor(
+                n_estimators=config['REGRESSION']['N_ESTIMATORS'],
+                max_depth=config['REGRESSION']['MAX_DEPTH'],
+                eta=config['REGRESSION']['ETA'],
+                subsample=config['REGRESSION']['SUBSAMPLE'],
+                colsample_bytree=config['REGRESSION']['COLSAMPLE_BYTREE'],
+                gamma=config['REGRESSION']['GAMMA'],
+                reg_lambda=config['REGRESSION']['REG_LAMBDA'],
+                random_state=42
+            )
+            self.model_name = 'XGBRegressor'
+        return self.model
+
     def get_model(self, model) -> (DecisionTreeRegressor or RandomForestRegressor or AdaBoostRegressor or
                                    GradientBoostingRegressor or XGBRegressor):
         """
@@ -332,7 +392,6 @@ class BoostingClassificationOptimize:
             ab = AdaBoostClassifier(
                 n_estimators=trial.suggest_int('n_estimators', 50, 500),
                 learning_rate=trial.suggest_float('learning_rate', 0.01, 1.0, log=True),
-                algorithm='SAMME',
                 estimator=DecisionTreeClassifier(
                     max_depth=trial.suggest_int('base_estimator_max_depth', 1, 20)
                 ),
@@ -347,7 +406,6 @@ class BoostingClassificationOptimize:
         ab = AdaBoostClassifier(
             n_estimators=study.best_params['n_estimators'],
             learning_rate=study.best_params['learning_rate'],
-            algorithm=study.best_params['algorithm'],
             estimator=DecisionTreeClassifier(
                 max_depth=study.best_params['base_estimator_max_depth']
             ),
@@ -422,6 +480,68 @@ class BoostingClassificationOptimize:
             random_state=42
         )
         return xgb
+    
+    def get_pretrained(self, model):
+        with open('../../pretrained_models.yaml', 'r') as file:
+            config = yaml.safe_load(file)
+        if model not in self.models_list:
+            raise ValueError(f'Model must be in {self.models_list}')
+        elif model == 'DecisionTreeClassifier':
+            self.model = DecisionTreeClassifier(
+                criterion=config['CLASSIFICATION']['CRITERION'],
+                max_depth=config['CLASSIFICATION']['MAX_DEPTH'],
+                min_samples_leaf=config['CLASSIFICATION']['MIN_SAMPLES_LEAF'],
+                ccp_alpha=config['CLASSIFICATION']['CCP_ALPHA'],
+                random_state=42
+            )
+            self.model_name = 'DecisionTreeClassifier'
+        elif model == 'RandomForestClassifier':
+            self.model = RandomForestClassifier(
+                criterion=config['CLASSIFICATION']['CRITERION'],
+                n_estimators=config['CLASSIFICATION']['N_ESTIMATORS'],
+                max_depth=config['CLASSIFICATION']['MAX_DEPTH'],
+                min_samples_leaf=config['CLASSIFICATION']['MIN_SAMPLES_LEAF'],
+                max_features=config['CLASSIFICATION']['MAX_FEATURES'],
+                max_samples=config['CLASSIFICATION']['MAX_SAMPLES'],
+                bootstrap=True,
+                oob_score=True,
+                random_state=42
+            )
+            self.model_name = 'RandomForestClassifier'
+        elif model == 'AdaBoostClassifier':
+            self.model = AdaBoostClassifier(
+                n_estimators=config['CLASSIFICATION']['N_ESTIMATORS'],
+                learning_rate=config['CLASSIFICATION']['LEARNING_RATE'],
+                estimator=DecisionTreeClassifier(
+                    max_depth=config['CLASSIFICATION']['BASE_ESTIMATOR_MAX_DEPTH']
+                ),
+                random_state=42
+            )
+            self.model_name = 'AdaBoostClassifier'
+        elif model == 'GradientBoostingClassifier':
+            self.model = GradientBoostingClassifier(
+                loss=config['CLASSIFICATION']['LOSS'],
+                n_estimators=config['CLASSIFICATION']['N_ESTIMATORS'],
+                max_depth=config['CLASSIFICATION']['MAX_DEPTH'],
+                min_samples_split=config['CLASSIFICATION']['MIN_SAMPLES_SPLIT'],
+                learning_rate=config['CLASSIFICATION']['LEARNING_RATE'],
+                random_state=42
+            )
+            self.model_name = 'GradientBoostingClassifier'
+        elif model == 'XGBClassifier':
+            self.model = XGBClassifier(
+                objective='multi:softprob',
+                n_estimators=config['CLASSIFICATION']['N_ESTIMATORS'],
+                max_depth=config['CLASSIFICATION']['MAX_DEPTH'],
+                eta=config['CLASSIFICATION']['ETA'],
+                subsample=config['CLASSIFICATION']['SUBSAMPLE'],
+                colsample_bytree=config['CLASSIFICATION']['COLSAMPLE_BYTREE'],
+                gamma=config['CLASSIFICATION']['GAMMA'],
+                reg_lambda=config['CLASSIFICATION']['REG_LAMBDA'],
+                random_state=42
+            )
+            self.model_name = 'XGBClassifier'
+        return self.model
 
     def get_model(self, model):
         """

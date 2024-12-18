@@ -1,6 +1,3 @@
-import sys
-sys.path.append("D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction")  # Thêm thư mục cha (src) vào PYTHONPATH
-
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -18,57 +15,88 @@ import yaml
 def transform_train_df():
     with open('../../config.yaml', 'r') as file:
         config = yaml.safe_load(file)
+    is_pretrain = config['TEST SETTINGS']['GET_PRETRAIN']  # New line for pretrain check
+    if is_pretrain:  # New block for pretrained model
+        dataset_path = config['TRAIN SETTINGS']['DATASET_PATH']
+        classifier = config['TRAIN SETTINGS']['MODEL']
+            # Split train & test dataset
+        x_train, x_test, y_train, y_test = transform_train_df()
+            # Get pretrained model
+        opt = BoostingClassificationOptimize(x_train, y_train)
+        model = opt.get_pretrained(classifier)
+            # Evaluate training results
+        y_pred = model.predict(x_train)
+        recall = recall_score(y_train, y_pred, average='macro')
+        precision = precision_score(y_train, y_pred, average='macro')
+        f1 = f1_score(y_train, y_pred, average='macro')
+        accuracy = accuracy_score(y_train, y_pred)
+        print("---------- TRAIN SET ----------")
+        print(f"Recall (Macro): {recall}")
+        print(f"Precision (Macro): {precision}")
+        print(f"F1 Score (Macro): {f1}")
+        print(f"Accuracy: {accuracy}")
+            # Evaluate test results
+        y_pred = model.predict(x_test)
+        recall = recall_score(y_test, y_pred, average='macro')
+        precision = precision_score(y_test, y_pred, average='macro')
+        f1 = f1_score(y_test, y_pred, average='macro')
+        accuracy = accuracy_score(y_test, y_pred)
+        print("---------- TEST SET ----------")
+        print(f"Recall (Macro): {recall}")
+        print(f"Precision (Macro): {precision}")
+        print(f"F1 Score (Macro): {f1}")
+        print(f"Accuracy: {accuracy}")
+    else:
+        # Import training config
+        dataset_path = config['TRAIN SETTINGS']['DATASET_PATH']
+        train_date = config['TRAIN SETTINGS']['TRAIN_DATE']
+        target_col = config['TRAIN SETTINGS']['TARGET_COL']
+        date_col = config['TRAIN SETTINGS']['DATE_COL']
+        is_plot_pca_threshold = config['TRAIN SETTINGS']['PLOT_PCA_THRESHOLD']
+        is_plot_model_selection = config['TRAIN SETTINGS']['PLOT_MODEL_SELECTION']
+        use_pca = config['TRAIN SETTINGS']['USE_PCA']
 
-    # Import training config
-    dataset_path = config['TRAIN SETTINGS']['DATASET_PATH']
-    train_date = config['TRAIN SETTINGS']['TRAIN_DATE']
-    target_col = config['TRAIN SETTINGS']['TARGET_COL']
-    date_col = config['TRAIN SETTINGS']['DATE_COL']
-    is_plot_pca_threshold = config['TRAIN SETTINGS']['PLOT_PCA_THRESHOLD']
-    is_plot_model_selection = config['TRAIN SETTINGS']['PLOT_MODEL_SELECTION']
-    use_pca = config['TRAIN SETTINGS']['USE_PCA']
+        # Import dataset
+        df = pd.read_csv(dataset_path)
+        df.drop(['AwayTeam_GF', 'HomeTeam_GF', 'GD_Home2Away'], axis=1, inplace=True)
+        df['HomeTeam_Result'] = df['HomeTeam_Result'].map({'W': 2, 'D': 1, 'L': 0})
 
-    # Import dataset
-    df = pd.read_csv(dataset_path)
-    df.drop(['AwayTeam_GF', 'HomeTeam_GF', 'GD_Home2Away'], axis=1, inplace=True)
-    df['HomeTeam_Result'] = df['HomeTeam_Result'].map({'W': 2, 'D': 1, 'L': 0})
+        # Encoding categorical data
+        encoder_cols_dict = {
+            'one_hot': ['HomeTeam', 'AwayTeam']
+        }
+        encoders = Encoders(df, encoder_cols_dict)
+        df = encoders.fit_transform()
 
-    # Encoding categorical data
-    encoder_cols_dict = {
-        'one_hot': ['HomeTeam', 'AwayTeam']
-    }
-    encoders = Encoders(df, encoder_cols_dict)
-    df = encoders.fit_transform()
+        # Split Train & Test dataset
+        x_train, x_test, y_train, y_test = train_test_split(df, train_date, date_col, target_col, is_drop_date=True)
 
-    # Split Train & Test dataset
-    x_train, x_test, y_train, y_test = train_test_split(df, train_date, date_col, target_col, is_drop_date=True)
+        # Normalize dataset
+        scaler = StandardScaler()
+        x_train = scaler.fit_transform(x_train)
+        x_test = scaler.transform(x_test)
 
-    # Normalize dataset
-    scaler = StandardScaler()
-    x_train = scaler.fit_transform(x_train)
-    x_test = scaler.transform(x_test)
+        # Plot PCA threshold
+        if is_plot_pca_threshold:
+            pca = PCA()
+            pca.fit(x_train)
+            plt.plot(np.cumsum(pca.explained_variance_ratio_))
+            plt.grid()
+            plt.xlabel('Number of Principal Components')
+            plt.ylabel('Explained Variance')
+            sns.despine()
 
-    # Plot PCA threshold
-    if is_plot_pca_threshold:
-        pca = PCA()
-        pca.fit(x_train)
-        plt.plot(np.cumsum(pca.explained_variance_ratio_))
-        plt.grid()
-        plt.xlabel('Number of Principal Components')
-        plt.ylabel('Explained Variance')
-        sns.despine()
+        # Apply PCA
+        if use_pca:
+            N_COMPONENTS = 75 # This threshold is chosen based on the 'Plot PCA threshold'
+            pca = PCA(n_components=N_COMPONENTS)
+            pca.fit(x_train)
+            x_train = pca.transform(x_train)
+            x_test = pca.transform(x_test)
 
-    # Apply PCA
-    if use_pca:
-        N_COMPONENTS = 75 # This threshold is chosen based on the 'Plot PCA threshold'
-        pca = PCA(n_components=N_COMPONENTS)
-        pca.fit(x_train)
-        x_train = pca.transform(x_train)
-        x_test = pca.transform(x_test)
-
-    # Plot Model Selection
-    if is_plot_model_selection:
-        plot_classifier_selection(x_train, y_train.values)
+        # Plot Model Selection
+        if is_plot_model_selection:
+            plot_classifier_selection(x_train, y_train.values)
 
     return x_train, x_test, y_train, y_test
 
