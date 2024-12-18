@@ -2,8 +2,6 @@ import pandas as pd
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
-from sklearn.svm import SVR, SVC
-from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LogisticRegression
 from xgboost import XGBClassifier
 from sklearn.metrics import mean_squared_error
@@ -65,7 +63,6 @@ def plot_classifier_selection(x, y):
         LogisticRegression(multi_class='multinomial', solver='sag', max_iter=10),
         KNeighborsClassifier(),
         DecisionTreeClassifier(),
-        SVC(),
         RandomForestClassifier(),
         AdaBoostClassifier(),
         GradientBoostingClassifier(),
@@ -106,7 +103,6 @@ def plot_regressor_selection(x, y):
     """
     regressors = [
         LinearRegression(),
-        SVR(),
         DecisionTreeRegressor(),
         RandomForestRegressor(),
         AdaBoostRegressor(),

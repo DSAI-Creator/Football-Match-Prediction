@@ -73,46 +73,79 @@ def test_boosting_regressor():
     # Import config plot
     with open('../../config.yaml', 'r') as file:
         config = yaml.safe_load(file)
-    plot_important_feats = config['TRAIN SETTINGS']['PLOT_FEATURES_IMPORTANCE']
-    date_col = config['TRAIN SETTINGS']['DATE_COL']
-    dataset_path = config['TRAIN SETTINGS']['DATASET_PATH']
-    n_trials = config['TRAIN SETTINGS']['N_TRIALS']
-    regressor = config['TRAIN SETTINGS']['MODEL']
+    is_pretrain = config['TEST SETTINGS']['GET_PRETRAIN']
+    if is_pretrain:
+        dataset_path = config['TEST SETTINGS']['DATASET_PATH']
+        regressor = config['TEST SETTINGS']['MODEL']
+        date_col = config['TEST SETTINGS']['DATE_COL']
+        target_col = config['TEST SETTINGS']['TARGET_COL']
 
-    # Get team names
-    df = pd.read_csv(dataset_path)
-    team_names = df['HomeTeam'].unique()
-    ones_mask = np.array([1 for _ in range(len(team_names))])
+        # Import dataset
+        df = pd.read_csv(dataset_path)
+        
+        # Split Train & Test dataset
+        x_train, x_test, y_train, y_test = transform_train_df()
 
-    # Split train & test dataset
-    x_train, x_test, y_train, y_test = transform_train_df()
+        # Get pretrained model
+        opt = BoostingRegressionOptimize(x_train, y_train)
+        model = opt.get_pretrained(regressor)
 
-    # Get Optimized model
-    opt = BoostingRegressionOptimize(x_train, y_train, n_trials)
-    model = opt.get_model(regressor)
+        # Evaluate training results
+        y_pred = model.predict(x_train)
+        r2 = r2_score(y_train, y_pred)
+        rmse = np.sqrt(mean_squared_error(y_train, y_pred))
+        print("---------- TRAIN SET ----------")
+        print(f"Mean Squared Error: {rmse}")
+        print(f"R² score: {r2}")
 
-    # Train model
-    model.fit(x_train, y_train)
+        # Evaluate test results
+        y_pred = model.predict(x_test)
+        r2 = r2_score(y_test, y_pred)
+        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        print("---------- TEST SET ----------")
+        print(f"Mean Squared Error: {rmse}")
+        print(f"R² score: {r2}")
+    else:
+        plot_important_feats = config['TRAIN SETTINGS']['PLOT_FEATURES_IMPORTANCE']
+        date_col = config['TRAIN SETTINGS']['DATE_COL']
+        dataset_path = config['TRAIN SETTINGS']['DATASET_PATH']
+        n_trials = config['TRAIN SETTINGS']['N_TRIALS']
+        regressor = config['TRAIN SETTINGS']['MODEL']
 
-    # Evaluate training results
-    y_pred = model.predict(x_train)
-    r2 = r2_score(y_train, y_pred)
-    rmse = np.sqrt(mean_squared_error(y_train, y_pred))
-    print("---------- TRAIN SET ----------")
-    print(f"Mean Squared Error: {rmse}")
-    print(f"R² score: {r2}")
+        # Get team names
+        df = pd.read_csv(dataset_path)
+        team_names = df['HomeTeam'].unique()
+        ones_mask = np.array([1 for _ in range(len(team_names))])
 
-    # Evaluate test results
-    y_pred = model.predict(x_test)
-    r2 = r2_score(y_test, y_pred)
-    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
-    print("---------- TEST SET ----------")
-    print(f"Mean Squared Error: {rmse}")
-    print(f"R² score: {r2}")
+        # Split train & test dataset
+        x_train, x_test, y_train, y_test = transform_train_df()
 
-    # Plot feature importance
-    if plot_important_feats:
-        opt.plot_importance_feats(feature_limits=20)
+        # Get Optimized model
+        opt = BoostingRegressionOptimize(x_train, y_train, n_trials)
+        model = opt.get_model(regressor)
+
+        # Train model
+        model.fit(x_train, y_train)
+
+        # Evaluate training results
+        y_pred = model.predict(x_train)
+        r2 = r2_score(y_train, y_pred)
+        rmse = np.sqrt(mean_squared_error(y_train, y_pred))
+        print("---------- TRAIN SET ----------")
+        print(f"Mean Squared Error: {rmse}")
+        print(f"R² score: {r2}")
+
+        # Evaluate test results
+        y_pred = model.predict(x_test)
+        r2 = r2_score(y_test, y_pred)
+        rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+        print("---------- TEST SET ----------")
+        print(f"Mean Squared Error: {rmse}")
+        print(f"R² score: {r2}")
+
+        # Plot feature importance
+        if plot_important_feats:
+            opt.plot_importance_feats(feature_limits=20)
 
 
 test_boosting_regressor()

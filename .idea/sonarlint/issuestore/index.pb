@@ -43,3 +43,5 @@ R
 Only_team.csv,2\9\295e0e621e26ef8e056dcb3a7b7215409a42f53c
 U
 %src/tests/test_boosting_classifier.py,3\3\33ab5b3689ddc3d7592d810649496211b7fd77ac
+T
+$src/tests/test_boosting_regressor.py,f\d\fd8d6d43d509195a0e8d8544cf5df5463bf0e669
