@@ -55,3 +55,7 @@ U
 %src/tests/test_boosting_classifier.py,3\3\33ab5b3689ddc3d7592d810649496211b7fd77ac
 I
 src/tests/test_encoder.py,9\e\9e96352d2f6306469f26226a14e23e8b63fc9a53
+J
+src/pretrained_models.yaml,e\3\e33b8c6e213f9d9f2ada29b50af7dd9f22d6f70d
+F
+pretrained_models.yaml,b\2\b263a88811d4aac17a303a5fead1b6d862747a70
