@@ -11,8 +11,6 @@ M
 src/preprocessing/__init__.py,f\6\f6f01343fa7babf6c8a5f26da5e3e9c6d0bd77ae
 p
 @src/scraping/Submitted Version/lightweight-laliga-scraping.ipynb,e\1\e17b2e11bee18d881bcc0c914e034c02f5f772db
-P
- tests/RemoveMeWhenFolderNotEmpty,0\5\057ab3fec4456f40935c623b050579d385461200
 C
 src/eda/__init__.py,1\c\1ceb100762c491c1fdb87cf71ad065d1294479f5
 A
@@ -42,4 +40,6 @@ J
 R
 "src/preprocessing/create_config.py,a\c\ac55fec7eacab758d7d99d0ad1287a38d9692d6a
 =
-tests/main.py,0\1\01f8376d5663f34ab63ba313f4c1816c37d3b3a7
+Only_team.csv,2\9\295e0e621e26ef8e056dcb3a7b7215409a42f53c
+U
+%src/tests/test_boosting_classifier.py,3\3\33ab5b3689ddc3d7592d810649496211b7fd77ac
