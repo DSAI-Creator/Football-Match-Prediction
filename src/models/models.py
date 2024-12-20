@@ -422,7 +422,6 @@ class BoostingClassificationOptimize:
 
         def objective(trial):
             gb = GradientBoostingClassifier(
-                loss=trial.suggest_categorical('loss', ['log_loss', 'exponential']),
                 n_estimators=trial.suggest_int('n_estimators', 100, 2000),
                 max_depth=trial.suggest_int('max_depth', 3, 20),
                 min_samples_split=trial.suggest_int('min_samples_split', 2, 50),
@@ -436,7 +435,6 @@ class BoostingClassificationOptimize:
         study.optimize(objective, n_trials=self.n_trials)
 
         gb = GradientBoostingClassifier(
-            loss=study.best_params['loss'],
             n_estimators=study.best_params['n_estimators'],
             max_depth=study.best_params['max_depth'],
             min_samples_split=study.best_params['min_samples_split'],
