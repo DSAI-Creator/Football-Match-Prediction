@@ -4,7 +4,6 @@ import random
 import os
 from teamname import get_team_names
 
-# Placeholder: Hàm dự đoán từ các mô hình (thay thế bằng mô hình thực của bạn)
 def model_1_predict(home_team, away_team, match_date):
     return random.choice(["Home Win", "Away Win", "Draw"]), random.randint(-3, 3)
 

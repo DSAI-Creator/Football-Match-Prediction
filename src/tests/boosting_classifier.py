@@ -1,3 +1,6 @@
+import sys
+sys.path.append('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction')
+
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -61,7 +64,7 @@ def transform_train_df(dataset_path, train_date, target_col, date_col, is_plot_p
 
 def boosting_classifier():
     # Import config plot
-    with open('../../config.yaml', 'r') as file:
+    with open('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
     # Get status
@@ -116,6 +119,13 @@ def boosting_classifier():
     # Plot feature importance
     if plot_important_feats:
         opt.plot_importance_feats(feature_limits=20)
+    return model
 
-
-boosting_classifier()
+'''
+# Example Usage
+# Classifier - HomeTeam_Result - DecisionTreeClassifier', 'RandomForestClassifier', 'AdaBoostClassifier', 'GradientBoostingClassifier', 'XGBClassifier'
+# Regressor - GD_Home2Away - 'DecisionTreeRegressor', 'RandomForestRegressor', 'AdaBoostRegressor', 'GradientBoostingRegressor', 'XGBRegressor'
+model = boosting_classifier()
+x_train = extract_input(date,home,away)
+model.predic(x_train)
+'''

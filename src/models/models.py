@@ -180,7 +180,7 @@ class BoostingRegressionOptimize:
         return xgb
 
     def get_pretrained(self, model):
-        with open('../../pretrained_models.yaml', 'r') as file:
+        with open('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/pretrained_models.yaml', 'r') as file:
             config = yaml.safe_load(file)
         if model not in self.models_list:
             raise ValueError(f'Model must be in {self.models_list}')
@@ -483,7 +483,7 @@ class BoostingClassificationOptimize:
         return xgb
     
     def get_pretrained(self, model):
-        with open('../../pretrained_models.yaml', 'r') as file:
+        with open('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/pretrained_models.yaml', 'r') as file:
             config = yaml.safe_load(file)
         if model not in self.models_list:
             raise ValueError(f'Model must be in {self.models_list}')

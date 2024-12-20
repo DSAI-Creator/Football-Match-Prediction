@@ -1,0 +1,35 @@
+# GET_PRETRAIN: True (~TEST SETTINGS) | False (~TRAIN SETTINGS)
+GET_PRETRAIN: False
+
+# TEST SETTINGS: Auto turn on when GET_PRETRAIN = True
+TEST SETTINGS:
+  DATE_COL: Time
+  USE_PCA: True
+  USE_NORMALIZE: True
+  PLOT_MODEL_SELECTION: False
+  PLOT_PCA_THRESHOLD: False
+  PLOT_FEATURES_IMPORTANCE: False
+  TRAIN_DATE: 2023-08
+  DATASET_PATH: E:\Workspaces\My Projects\Football-Match-Prediction\data\processed\df_GD_as_target.csv
+  # Regressor: ['DecisionTreeRegressor', 'RandomForestRegressor', 'AdaBoostRegressor', 'GradientBoostingRegressor', 'XGBRegressor']
+  # Classifier: ['DecisionTreeClassifier', 'RandomForestClassifier', 'AdaBoostClassifier', 'GradientBoostingClassifier', 'XGBClassifier']
+  MODEL: XGBClassifier
+  # Regressor: GD_Home2Away | Classifier: HomeTeam_Result
+  TARGET_COL: HomeTeam_Result
+
+# TRAIN SETTINGS: Auto turn on when GET_PRETRAIN = False
+TRAIN SETTINGS:
+  DATE_COL: Time
+  USE_PCA: True
+  USE_NORMALIZE: True
+  PLOT_MODEL_SELECTION: False
+  PLOT_PCA_THRESHOLD: False
+  PLOT_FEATURES_IMPORTANCE: False
+  TRAIN_DATE: 2024-08
+  N_TRIALS: 10
+  DATASET_PATH: E:\Workspaces\My Projects\Football-Match-Prediction\data\processed\df_GD_as_target.csv
+  # Regressor: ['DecisionTreeRegressor', 'RandomForestRegressor', 'AdaBoostRegressor', 'GradientBoostingRegressor', 'XGBRegressor']
+  # Classifier: ['DecisionTreeClassifier', 'RandomForestClassifier', 'AdaBoostClassifier', 'GradientBoostingClassifier', 'XGBClassifier']
+  MODEL: DecisionTreeRegressor
+  # Regressor: GD_Home2Away | Classifier: HomeTeam_Result
+  TARGET_COL: GD_Home2Away

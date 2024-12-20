@@ -1,3 +1,6 @@
+import sys
+sys.path.append('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction')
+
 import pandas as pd
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -59,7 +62,7 @@ def transform_train_df(dataset_path, train_date, target_col, date_col, is_plot_p
 
 def boosting_regressor():
     # Import config plot
-    with open('../../config.yaml', 'r') as file:
+    with open('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/config.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
     # Get status
