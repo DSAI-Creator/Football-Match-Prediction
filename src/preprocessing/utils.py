@@ -11,6 +11,8 @@ from sklearn.tree import DecisionTreeRegressor
 from xgboost import XGBRegressor
 from sklearn.metrics import make_scorer
 from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.metrics import recall_score, precision_score, f1_score, accuracy_score, r2_score
+import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -133,3 +135,20 @@ def plot_regressor_selection(x, y):
     plt.xlabel('Mean Squared Error')
     plt.title('Regressor Selection Based on MSE')
     plt.show()
+
+def evaluate_classifier(y_val, y_pred):
+    recall = recall_score(y_val, y_pred, average='macro')
+    precision = precision_score(y_val, y_pred, average='macro')
+    f1 = f1_score(y_val, y_pred, average='macro')
+    accuracy = accuracy_score(y_val, y_pred)
+    print(f"Recall (Macro): {recall}")
+    print(f"Precision (Macro): {precision}")
+    print(f"F1 Score (Macro): {f1}")
+    print(f"Accuracy: {accuracy}")
+
+
+def evaluate_regressor(y_val, y_pred):
+    r2 = r2_score(y_val, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_val, y_pred))
+    print(f"RMSE: {rmse}")
+    print(f"R² score: {r2}")
