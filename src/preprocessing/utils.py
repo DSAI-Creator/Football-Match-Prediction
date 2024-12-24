@@ -31,8 +31,8 @@ def train_test_split(df, train_date, date_col, target_col, is_drop_date=False):
     df[date_col] = pd.to_datetime(df[date_col])
 
     # Split the data into training and validation sets
-    train = df[df[date_col] <= train_date]
-    val = df[df[date_col] > train_date]
+    train = df[(df[date_col] <= '2023-08') | (df[date_col] >= '2024-10')]
+    val = df[df[date_col] > '2023-12']
 
     # Define (x,y) of train & valid dataset
     x_train = train.drop(target_col, axis=1)

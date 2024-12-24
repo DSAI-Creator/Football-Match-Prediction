@@ -519,7 +519,6 @@ class BoostingClassificationOptimize:
             self.model_name = 'AdaBoostClassifier'
         elif model == 'GradientBoostingClassifier':
             self.model = GradientBoostingClassifier(
-                loss=config['CLASSIFICATION']['GB']['LOSS'],
                 n_estimators=config['CLASSIFICATION']['GB']['N_ESTIMATORS'],
                 max_depth=config['CLASSIFICATION']['GB']['MAX_DEPTH'],
                 min_samples_split=config['CLASSIFICATION']['GB']['MIN_SAMPLES_SPLIT'],
