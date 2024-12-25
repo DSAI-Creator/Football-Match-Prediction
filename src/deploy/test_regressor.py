@@ -17,7 +17,7 @@ import pandas as pd
 import random
 import os
 from teamname import get_team_names
-from src.tests.boosting_classifier import boosting_classifier
+from src.tests.boosting_regressor import boosting_regressor
 from utils import transform_train_df_classifier, transform_train_df_regressor, Classifier_Model_Setting,Regressor_Model_Setting
 
 
@@ -58,7 +58,7 @@ def get_1_sample_regressor():
 def main():
     Regressor_Model_Setting(TARGET_COL='GD_Home2Away', MODEL='DecisionTreeRegressor',config_path='D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/config.yaml')
     x_train_regressor = get_1_sample_regressor()
-    regressor_model = boosting_classifier()
+    regressor_model = boosting_regressor()
     #x_train = extract_input(date,home,away)
     game_gd = regressor_model.predict(x_train_regressor)
     print(game_gd)

@@ -17,18 +17,16 @@ import yaml
 def transform_train_df(dataset_path, train_date, target_col, date_col, is_plot_pca_threshold, is_plot_model_selection, use_pca, use_normalize):
     # Import dataset
     df = pd.read_csv(dataset_path)
-    df.drop(['AwayTeam_GF', 'HomeTeam_GF', 'HomeTeam_Result'], axis=1, inplace=True)
+    df.drop(['AwayTeam_GF', 'HomeTeam_GF', 'Season', 'Round', 'HomeTeam', 'AwayTeam', 'H2H_Away_Goals','H2H_Away_Wins',
+             'H2H_Draws',  'H2H_Home_Goals',  'H2H_Home_Wins',  'H2H_Total_Matches', 'HomeTeam_Result'], axis=1, inplace=True)
 
-    # Encoding categorical data
-    encoder_cols_dict = {
-        'one_hot': ['HomeTeam', 'AwayTeam']
-    }
-    encoders = Encoders(df, encoder_cols_dict)
-    df = encoders.fit_transform()
+    
 
     # Split Train & Test dataset
     x_train, x_test, y_train, y_test = train_test_split(df, train_date, date_col, target_col, is_drop_date=True)
+    cols = x_train.columns
 
+    scaler = None
     # Normalize dataset
     if use_normalize:
         scaler = StandardScaler()
@@ -45,9 +43,10 @@ def transform_train_df(dataset_path, train_date, target_col, date_col, is_plot_p
         plt.ylabel('Explained Variance')
         sns.despine()
 
+    pca = None
     # Apply PCA
     if use_pca:
-        N_COMPONENTS = 75  # This threshold is chosen based on the 'Plot PCA threshold'
+        N_COMPONENTS = 60 # This threshold is chosen based on the 'Plot PCA threshold'
         pca = PCA(n_components=N_COMPONENTS)
         pca.fit(x_train)
         x_train = pca.transform(x_train)
@@ -57,12 +56,12 @@ def transform_train_df(dataset_path, train_date, target_col, date_col, is_plot_p
     if is_plot_model_selection:
         plot_regressor_selection(x_train, y_train.values)
 
-    return x_train, x_test, y_train, y_test
+    return x_train, x_test, y_train, y_test, scaler, pca, cols
 
 
 def boosting_regressor():
     # Import config plot
-    with open('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/config.yaml', 'r') as file:
+    with open('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/config_regressor.yaml', 'r') as file:
         config = yaml.safe_load(file)
 
     # Get status
@@ -84,7 +83,7 @@ def boosting_regressor():
     file.close()
 
     # Split train & test dataset
-    x_train, x_test, y_train, y_test = transform_train_df(
+    x_train, x_test, y_train, y_test, scaler, pca, cols = transform_train_df(
         dataset_path=dataset_path,
         train_date=train_date,
         target_col=target_col,
@@ -118,5 +117,66 @@ def boosting_regressor():
     if plot_important_feats:
         opt.plot_importance_feats(feature_limits=20)
 
+    return model, scaler, pca, cols
 
-boosting_regressor()
+def get_latest_match_data(df_team, team_name, target_time, team_col='HomeTeam'):
+    """
+    Retrieves data for the latest match of a given team before a target time.
+
+    Args:
+        df_team: DataFrame containing match data.
+        team_name: Name of the team to search for.
+        target_time: The target time to find the latest match before.
+        team_col: Column name to filter matches by team (default is 'HomeTeam').
+
+    Returns:
+        A pandas Series representing the latest match data, or None if no match is found.
+    """
+    # Filter matches for the specified team and before the target time
+    team_matches = df_team[(df_team[team_col] == team_name) & (df_team['Time'] < target_time)]
+    
+    if team_matches.empty:
+        return None  # No matches found for the team before the target time
+    
+    # Ensure matches are sorted by 'Time' in descending order
+    team_matches = team_matches.sort_values(by='Time', ascending=False)
+    
+    # Get the latest match
+    latest_match = team_matches.iloc[0]  # First row after sorting
+    
+    return latest_match
+
+def get_regressor_input(df_team, df_opponent, team_name, opponent_name, target_time):
+    team_match = get_latest_match_data(df_team, team_name, target_time)
+    opponent_match = get_latest_match_data(df_opponent, opponent_name, target_time, team_col='AwayTeam')
+    team_match = team_match.to_frame().T
+    opponent_match = opponent_match.to_frame().T
+    team_match = team_match.drop(['Time', 'HomeTeam', 'AwayTeam', 'Round', 'Season'], axis=1)
+    opponent_match = opponent_match.drop(['Time', 'HomeTeam', 'AwayTeam', 'Round', 'Season'], axis=1)
+    team_match.reset_index(drop=True, inplace=True)
+    opponent_match.reset_index(drop=True, inplace=True)
+    input_data = pd.concat([team_match, opponent_match], axis=1)
+    return input_data
+
+'''
+model, scaler, pca, cols = boosting_regressor()
+
+
+df_team = pd.read_csv('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/src/tests/df_team.csv')
+df_opponent = pd.read_csv('D:/HUST/_Intro to DS/Capstone Project/Football-Match-Prediction/src/tests/df_opponent.csv')
+team_name = 'Barcelona'
+opponent_name = 'Real Madrid'
+target_time = '2024-10-24'
+
+x_test = get_regressor_input(df_team, df_opponent, 'Barcelona', 'Real Madrid', '2024-08-22')
+# x_test.to_csv('x_test.csv')
+x_test.drop(['AwayTeam_GA', 'AwayTeam_GF',  'AwayTeam_Result', 'HomeTeam_GA', 'HomeTeam_GF', 'HomeTeam_Result'], axis=1, inplace=True)
+x_test = x_test[cols]
+if scaler:
+	x_test = scaler.transform(x_test)
+if pca:
+    x_test = pca.transform(x_test)
+    
+y_pred = model.predict(x_test)
+print(y_pred)
+'''
