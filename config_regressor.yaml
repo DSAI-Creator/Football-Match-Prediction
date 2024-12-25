@@ -8,7 +8,7 @@ TEST SETTINGS:
   PLOT_FEATURES_IMPORTANCE: false
   TRAIN_DATE: 2024-11
   DATASET_PATH: D:\HUST\_Intro to DS\Capstone Project\Football-Match-Prediction\data\processed\train_data_merged.csv
-  MODEL: XGBRegressor
+  MODEL: DecisionTreeRegressor
   TARGET_COL: GD_Home2Away
 TRAIN SETTINGS:
   DATE_COL: Time
